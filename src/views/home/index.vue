@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!-- 侧边容器 -->
-    <el-aside style="width:200px">
+    <el-aside style="width:200px;background:#323745;">
       <!-- 组件 -->
       <layout-aside></layout-aside>
     </el-aside>
@@ -12,7 +12,10 @@
         <!-- 引入组件 -->
         <layout-header></layout-header>
       </el-header>
-      <el-main>主体</el-main>
+      <!-- 主体区域 -->
+      <el-main style="margin:0;padding:0">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
