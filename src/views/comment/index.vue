@@ -1,6 +1,6 @@
 <template>
   <!-- 最外层 用el-card卡片作业面 -->
-  <el-card v-loading="false">
+  <el-card v-loading="loading">
     <!-- 插槽内容标题 -->
     <bread-crumb slot="header">
       <!-- 面包屑的具名插槽 -->
@@ -44,10 +44,10 @@
 export default {
   data () {
     return {
-      loading: false,
+      loading: false, // 控制进度条的状态
       list: [],
       page: {
-        page: 1, // 第几页
+        page: 1, // 默认第几页
         pageSize: 10, // 当前显示的条数
         total: 0 //  总条数
       }
@@ -79,6 +79,7 @@ export default {
       return row.comment_status ? '正常' : '关闭'
     },
     getComments () {
+      this.loading = true // 请求数据之前 把进度条打开
       // query参数 就相当于get参数 路径参数 url参数 params
       // body 路径参数  data
       this.$axios({
@@ -89,6 +90,7 @@ export default {
           per_page: this.page.pageSize
         }
       }).then(result => {
+        this.loading = false // 响应数据后关系
         this.list = result.data.results
         this.page.total = result.data.total_count
       })
