@@ -35,12 +35,11 @@ export default {
   data () {
     let validator = function (rule, value, callBack) {
       if (value) {
-        callBack()
+        callBack() // 如果value为true直接通过
       } else {
-        callBack(new Error('您必须无条件同意'))
+        callBack(new Error('您必须无条件同意被坑'))
       }
     }
-
     return {
       loginForm: {
         mobile: '', // 手机号
@@ -91,20 +90,13 @@ export default {
             url: '/authorizations',
             method: 'post',
             data: this.loginForm
+          }).then(result => {
+            // console.log(result.data.data.token)
+            // 放到前端的缓存中
+            window.localStorage.setItem('user-token', result.data.token)
+            // 编程式导航
+            this.$router.push('/') // 登录成功 跳转到home页
           })
-            .then(result => {
-              // console.log(result.data.data.token)
-              // 放到前端的缓存中
-              window.localStorage.setItem('user-token', result.data.token)
-              // 编程式导航
-              this.$router.push('/') // 登录成功 跳转到home页
-            })
-            .catch(() => {
-              this.$message({
-                message: '手机号或者验证码错误',
-                type: 'warning'
-              })
-            })
         }
       })
     }

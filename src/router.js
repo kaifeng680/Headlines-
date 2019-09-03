@@ -23,6 +23,10 @@ export default new Router({
         {
           path: '', // 默认的耳机路由为空字符串
           component: Main
+        },
+        {
+          path: 'comment',
+          component: () => import('./views/comment')
         }
       ]
     }
