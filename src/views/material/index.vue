@@ -3,6 +3,9 @@
     <bread-crumb slot="header">
       <template slot="title">素材管理</template>
     </bread-crumb>
+    <el-upload :show-file-list="false" :http-request="uploadImg" action class="upload-btn">
+      <el-button size="small" type="primary">上传图片</el-button>
+    </el-upload>
     <el-tabs v-model="activeName" @tab-click="changeTab">
       <el-tab-pane label="全部素材" name="all">
         <!-- 全部素材的内容 -->
@@ -10,8 +13,12 @@
           <el-card class="img-card" v-for="item  in  list" :key="item.id">
             <img :src="item.url" alt />
             <el-row class="operate" type="flex" align="middle" justify="space-around">
-              <i :style="{color:item.is_collected ? 'red' : '' }" class="el-icon-star-on"></i>
-              <i class="el-icon-delete-solid"></i>
+              <i
+                @click="collectOrCancel(item)  "
+                :style="{color:item.is_collected ? 'red' : '' }"
+                class="el-icon-star-on"
+              ></i>
+              <i @click="deleImg(item)" class="el-icon-delete-solid"></i>
             </el-row>
           </el-card>
         </div>
@@ -62,6 +69,41 @@ export default {
     }
   },
   methods: {
+    uploadImg (params) {
+      // formdata类型
+      let obj = new FormData()
+      obj.append('image', params.file)
+      this.$axios({
+        url: '/user/images',
+        method: 'post',
+        data: obj
+      }).then(() => {
+        this.getMaterial()
+      })
+    },
+    collectOrCancel (item) {
+      let mess = item.is_collected ? '取消' : ''
+      this.$confirm(`你确定要${mess}收藏这张图片吗?`, '提示').then(() => {
+        this.$axios({
+          url: `/user/images/${item.id}`,
+          method: 'put',
+          data: { collect: !item.is_collected } // 取反
+        }).then(() => {
+          this.getMaterial()
+        })
+      })
+    },
+    // 是否缺任删除
+    deleImg (item) {
+      this.$confirm('您确定要删除这张图片吗?', '提示').then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/user/images/${item.id}`
+        }).then(() => {
+          this.getMaterial() //   删除成功 重新拉取数据
+        })
+      })
+    },
     changePage (newPage) {
       this.page.page = newPage
       this.getMaterial() //   请求最新的数据
@@ -85,6 +127,7 @@ export default {
           collect: this.activeName === 'collect' // collect为false就是查全部数据 collect 为true的话 是查询收藏数据
         }
       }).then(result => {
+        console.log(result)
         this.list = result.data.results
         this.page.total = result.data.total_count
       })
@@ -98,11 +141,16 @@ export default {
 
 <style lang='less' scoped>
 .material {
+  .upload-btn {
+    position: absolute;
+    right: 10px;
+    margin-top: -10px;
+  }
+
   .card-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-
     .img-card {
       width: 180px;
       height: 180px;

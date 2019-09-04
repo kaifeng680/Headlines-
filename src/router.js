@@ -25,12 +25,15 @@ export default new Router({
           component: Main
         },
         {
-          path: 'comment',
+          path: 'comment', // 评论管理
           component: () => import('./views/comment')
         },
         {
-          path: 'material',
+          path: 'material', // 素材管理
           component: () => import('./views/material')
+        }, {
+          path: 'articles', // 内容列表
+          component: () => import('./views/articles')
         }
       ]
     }
