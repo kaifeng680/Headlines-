@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     uploadImg (params) {
-      // formdata类型
+      //   formdata类型
       let obj = new FormData()
       obj.append('image', params.file)
       this.$axios({
@@ -93,7 +93,8 @@ export default {
         })
       })
     },
-    // 是否缺任删除
+
+    // 是否确认删除
     deleImg (item) {
       this.$confirm('您确定要删除这张图片吗?', '提示').then(() => {
         this.$axios({
@@ -104,6 +105,7 @@ export default {
         })
       })
     },
+
     changePage (newPage) {
       this.page.page = newPage
       this.getMaterial() //   请求最新的数据
