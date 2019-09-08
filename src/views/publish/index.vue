@@ -18,7 +18,7 @@
         <!--quilleditor编辑器组件-->
         <quill-editor v-model="formData.content" style="height:400px;width:800px"></quill-editor>
       </el-form-item>
-      <el-form-item label="封面" style="margin-top:120px">
+      <el-form-item label="封面" style="margin-top:120px" prop="cover">
         {{formData}}
         <el-radio-group @change="changeCoverType" v-model="formData.cover.type">
           <el-radio :label="1">单图</el-radio>
@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item>
         <!-- 我是封面组件 -->
-        <cover-image :images="formData.cover.images"></cover-image>
+        <cover-image @onClickImg="receiveImg" :images="formData.cover.images"></cover-image>
       </el-form-item>
       <el-form-item label="频道" prop="channel_id">
         <el-select v-model="formData.channel_id">
@@ -48,6 +48,31 @@
 <script>
 export default {
   data () {
+    let func = function (rule, value, callBack) {
+      if (value.type === 1) {
+        value.images.length === 1 && value.images[0]
+          ? callBack()
+          : callBack(new Error('对不起，您未设置单张封面'))
+      } else if (value.type === 3) {
+        if (
+          value.images.length === 3 &&
+          value.images[0] &&
+          value.images[1] &&
+          value.images[2]
+        ) {
+          callBack()
+        } else {
+          callBack(new Error('对不起您未设置全三张封面'))
+        }
+      } else {
+        if (value.images.length > 0) {
+          callBack(new Error('对不起您的封面设置有错误'))
+        } else {
+          callBack()
+        }
+      }
+    }
+
     return {
       channels: [],
       formData: {
@@ -64,6 +89,11 @@ export default {
           {
             required: true,
             message: '标题不能为空'
+          },
+          {
+            min: 5,
+            max: 30,
+            message: '标题必须为5到30之间'
           }
         ],
         content: [
@@ -77,12 +107,36 @@ export default {
             required: true,
             message: '频道不能为空'
           }
+        ],
+        cover: [
+          { validator: func } // 自定义校验函数
         ]
       }
     }
   },
   methods: {
-    //  切换封面类型
+    // receiveImg(url, index) {
+    //   // 拿到地址  更新images 需要知道更新哪一条
+    //   this.formData.cover.images = this.formData.cover.images.map(function(
+    //     item,
+    //     i
+    //   ) {
+    //     if (i === index) {
+    //       return url;
+    //     } else {
+    //       return item;
+    //     }
+    //   });
+    // },
+    //  图片上传的
+
+    receiveImg (url, index) {
+      this.formData.cover.images = this.formData.cover.images.map((item, i) =>
+        i === index ? url : item
+      )
+    },
+
+    //  切换封面类型  根据当前类型决定 images结构
     changeCoverType () {
       if (this.formData.cover.type === 1) {
         this.formData.cover.images = [''] // 有一张封面 待选择

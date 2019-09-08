@@ -1,5 +1,8 @@
 import router from './router'
+import nprogress from 'nprogress'
+import 'nprogress/nprogress.css'
 router.beforeEach(function (to, from, next) {
+  nprogress.start() // 开启进度条
   // 去的地址如果以/home为起始 就判断有没有带token
   if (to.path.startsWith('/home')) {
     let token = window.localStorage.getItem('user-token')
@@ -15,4 +18,8 @@ router.beforeEach(function (to, from, next) {
     next()
   }
 })
+router.afterEach(() => {
+  nprogress.done() // 关闭进度条
+})
+
 export default router

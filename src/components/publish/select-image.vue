@@ -3,7 +3,7 @@
     <el-tab-pane label="全部素材" name="all">
       <div class="img-list">
         <el-card class="img-item" v-for="item in list" :key="item.id">
-          <img :src="item.url" alt />
+          <img @click="selectImg(item)" :src="item.url" alt />
         </el-card>
       </div>
       <el-row type="flex" justify="center">
@@ -17,7 +17,11 @@
         ></el-pagination>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="上传" name="upload">配置管理</el-tab-pane>
+    <el-tab-pane label="上传图片" name="upload">
+      <el-upload :http-request="uploadImg" action :show-file-list="false">
+        <el-button size="small" type="primary">上传图片</el-button>
+      </el-upload>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -31,10 +35,32 @@ export default {
         page: 1,
         pageSize: 8,
         total: 0
-      }
+      },
+      elImg: null
     }
   },
   methods: {
+    // 图片上传
+    uploadImg (params) {
+      // formdata类型
+      let formData = new FormData()
+      formData.append('image', params.file)
+      this.$axios({
+        url: '/user/images',
+        method: 'post',
+        data: formData
+      }).then(result => {
+        // 获取上传成功之后的地址
+        this.$emit('onSelectImg', result.data.url)
+      })
+    },
+
+    // 点击选择一张图片
+    selectImg (item) {
+      //  可以获得到点击图片的地址  item.url
+      this.$emit('onSelectImg', item.url)
+    },
+    //   分页
     changePage (newPage) {
       this.page.page = newPage
       this.getMaterial()
@@ -54,6 +80,9 @@ export default {
     }
   },
   created () {
+    this.$on('onSelectImg', function (url) {
+      alert(url)
+    })
     this.getMaterial()
   }
 }
