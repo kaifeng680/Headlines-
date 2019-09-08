@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!-- 侧边容器 -->
-    <el-aside style="width:200px;background:#323745;">
+    <el-aside     :style="{width:collapse ? '61px' :'201px'}"               style="background:#323745;overflow: hidden;">
       <!-- 组件 -->
       <layout-aside></layout-aside>
     </el-aside>
@@ -21,7 +21,19 @@
 </template>
 
 <script>
-export default {}
+import eventBus from '../../utils/events'
+export default {
+  data () {
+    return {
+      collapse: false
+    }
+  },
+  created () {
+    eventBus.$on('openOrclose', (status) => {
+      this.collapse = status
+    })
+  }
+}
 </script>
 
 <style lang='less' scoped>

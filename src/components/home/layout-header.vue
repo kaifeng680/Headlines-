@@ -2,7 +2,7 @@
   <el-row class="layout-header" type="flex" justify="space-between">
     <!-- span是给col的宽度  elementUI将页面分为24分 -->
     <el-col class="left" :span="6">
-      <i class="el-icon-s-unfold icon"></i>
+      <i  @click="openOrclose"    class="icon"   :class="{'el-icon-s-unfold':close,'el-icon-s-fold':!close }"></i>
       <span>江苏传智播客教育股份科技有限公司</span>
     </el-col>
     <el-col class="right" :span="3">
@@ -29,11 +29,17 @@ import eventBus from '../../utils/events'
 export default {
   data () {
     return {
+      close: false, // 默认是展开
       userInfo: {},
       dafaultImg: require('../../assets/img/avatar.jpg') // 转成base64字符串
     }
   },
   methods: {
+    // 展开或者折叠
+    openOrclose () {
+      this.close = !this.close
+      eventBus.$emit('openOrclose', this.close)
+    },
     //  获取用户数据
     getUserInfo () {
       this.$axios({

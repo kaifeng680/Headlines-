@@ -51,6 +51,11 @@ export default new Router({
           // 账户信息
           path: 'account',
           component: () => import('./views/account')
+        },
+        {
+          // 账户信息
+          path: 'fansdata',
+          component: () => import('./views/fans/fansdata.vue')
         }
       ]
     }

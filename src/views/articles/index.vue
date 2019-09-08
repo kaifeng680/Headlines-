@@ -95,18 +95,16 @@ export default {
       this.$router.push(`/home/publish/${item.id.toString()}`)
     },
     // 删除数据
-    delItem (item) {
-      this.$confirm('您是否要删除此文章?', '提示').then(() => {
-        // 确认删除
-        // item.id 因为长度过长     bigNumber类型=> toString()形成正确的结构
-        this.$axios({
-          method: 'delete',
-          url: `/articles/${item.id.toString()}`
-        }).then(() => {
-          // 重新拉取数据
-          this.getConditionArticle()
-        })
+    async   delItem (item) {
+      await this.$confirm('您是否要删除此文章?', '提示')
+      // 确认删除
+      // item.id 因为长度过长     bigNumber类型=> toString()形成正确的结构
+      await this.$axios({
+        method: 'delete',
+        url: `/articles/${item.id.toString()}`
       })
+      // 重新拉取数据
+      this.getConditionArticle()
     },
     // 分页
     changePage (newPage) {

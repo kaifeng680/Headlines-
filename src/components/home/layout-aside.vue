@@ -1,13 +1,17 @@
 <template>
   <div class="aside">
     <div class="asideimg">
-      <img src="../../assets/img/logo_admin.png" alt />
+      <img   :src="collapse ?  smallImg  :  bigImg"    alt />
     </div>
-    <el-menu background-color="#323745" text-color="#abafb5" active-text-color="#ffd04b" router>
+    <el-menu background-color="#323745" text-color="#abafb5"
+     active-text-color="#ffd04b" router
+        :style="{width:collapse ? '61px' :'201px'}"
+      :collapse="collapse" >
       <el-menu-item index="/">
         <i class="el-icon-s-home"></i>
         <span slot="title">首页</span>
       </el-menu-item>
+      <!-- el-submenu  是折叠菜单 -->
       <el-submenu>
         <template slot="title">
           <i class="el-icon-notebook-2"></i>
@@ -38,12 +42,26 @@
 </template>
 
 <script>
-export default {}
+import eventBus from '../../utils/events'
+export default {
+  data () {
+    return {
+      collapse: false,
+      smallImg: require('../../assets/img/toutiao.png'),
+      bigImg: require('../../assets/img/logo_admin.png')
+    }
+  },
+  created () {
+    // 接受传过来的 状态
+    eventBus.$on('openOrclose', (status) => {
+      this.collapse = status
+    })
+  }
+}
 </script>
 
 <style lang='less' scoped >
 .aside {
-  width: 200px;
   height: 100vh;
   background-color: #323745;
   .asideimg {
